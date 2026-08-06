@@ -7,6 +7,7 @@ class WeatherModel {
   final int humidity;
   final double precipitation;
   final int weatherCode;
+  final String currentTime;
   // final List<HourlyForecast>? hourlyForecasts;
 
   WeatherModel({
@@ -18,6 +19,7 @@ class WeatherModel {
     required this.windSpeed,
     required this.weatherCode,
     required this.precipitation,
+    required this.currentTime,
     // this.hourlyForecasts,
   });
 
@@ -37,31 +39,49 @@ class WeatherModel {
       windSpeed: current['wind_speed_10m']?.toDouble() ?? 0.0,
       precipitation: current['precipitation']?.toDouble() ?? 0.0,
       weatherCode: current['weather_code'] ?? 0,
+      currentTime: current['time']?.toString() ?? '',
     );
   }
 
   //for shared prefferences
 
-  Map<String, dynamic> toJson() => {
-    'latitude': latitude,
-    'longitude': longitude,
-    'temperature': temperature,
-    'apparentTemperature': apparentTemperature,
-    'humidity': humidity,
-    'windSpeed': windSpeed,
-    'precipitation': precipitation,
-    'weatherCode': weatherCode,
-  };
+  // Map<String, dynamic> toJson() => {
+  //   'latitude': latitude,
+  //   'longitude': longitude,
+  //   'temperature': temperature,
+  //   'apparentTemperature': apparentTemperature,
+  //   'humidity': humidity,
+  //   'windSpeed': windSpeed,
+  //   'precipitation': precipitation,
+  //   'weatherCode': weatherCode,
+  // };
 }
 
 class HourlyForecast {
-  final double temprature;
+  final double temperature;
   final String time;
   final int weatherCode;
 
   HourlyForecast({
-    required this.temprature,
+    required this.temperature,
     required this.time,
     required this.weatherCode,
   });
+
+  factory HourlyForecast.fromJson(Map<String, dynamic> json) {
+    final time = json['time']?.toDouble() ?? 0.0;
+    final temperature = json['temperature']?.toDouble() ?? 0.0;
+    final weathercode = json['weatherCode'];
+
+    return HourlyForecast(
+      temperature: temperature,
+      time: time,
+      weatherCode: weathercode,
+    );
+  }
+  Map<String, dynamic> toJson() => {
+    'time': time,
+    'temperature': temperature,
+    'weatherCode': weatherCode,
+  };
 }
