@@ -42,19 +42,6 @@ class WeatherModel {
       currentTime: current['time']?.toString() ?? '',
     );
   }
-
-  //for shared prefferences
-
-  // Map<String, dynamic> toJson() => {
-  //   'latitude': latitude,
-  //   'longitude': longitude,
-  //   'temperature': temperature,
-  //   'apparentTemperature': apparentTemperature,
-  //   'humidity': humidity,
-  //   'windSpeed': windSpeed,
-  //   'precipitation': precipitation,
-  //   'weatherCode': weatherCode,
-  // };
 }
 
 class HourlyForecast {
@@ -69,14 +56,18 @@ class HourlyForecast {
   });
 
   factory HourlyForecast.fromJson(Map<String, dynamic> json) {
-    final time = json['time']?.toDouble() ?? 0.0;
-    final temperature = json['temperature']?.toDouble() ?? 0.0;
-    final weathercode = json['weatherCode'];
+    // Safely parse temperature whether it's stored as double, int, or missing
+    double parsedTemp = 0.0;
+    if (json['temperature'] != null) {
+      parsedTemp = double.tryParse(json['temperature'].toString()) ?? 0.0;
+    }
 
     return HourlyForecast(
-      temperature: temperature,
-      time: time,
-      weatherCode: weathercode,
+      time: json['time']?.toString() ?? '',
+      temperature: parsedTemp,
+      weatherCode: json['weatherCode'] is int
+          ? json['weatherCode']
+          : int.tryParse(json['weatherCode']?.toString() ?? '0') ?? 0,
     );
   }
   Map<String, dynamic> toJson() => {
