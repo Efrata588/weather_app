@@ -46,7 +46,22 @@ class WeatherDatasource {
 
     List<String> existingList = prefs.getStringList(hourlyHistoryKey) ?? [];
 
+    // Avoid duplicates: check if the last record has the same time
+    if (existingList.isNotEmpty) {
+      final lastRecord = HourlyForecast.fromJson(
+        jsonDecode(existingList.last) as Map<String, dynamic>,
+      );
+      if (lastRecord.time == newRecord.time) {
+        return; // Skip duplicate
+      }
+    }
+
     existingList.add(jsonEncode(newRecord.toJson()));
+
+    // Keep only the last 24 records to prevent unlimited growth
+    if (existingList.length > 24) {
+      existingList = existingList.sublist(existingList.length - 24);
+    }
 
     await prefs.setStringList(hourlyHistoryKey, existingList);
   }
